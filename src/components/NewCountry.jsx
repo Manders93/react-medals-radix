@@ -1,6 +1,7 @@
 import { useState } from "react";
-import trigger from "../assets/trigger.svg";
-import "./NewCountry.css";
+import { Dialog, Flex, Button, Text, TextField } from "@radix-ui/themes";
+import { PlusCircledIcon } from "@radix-ui/react-icons";
+import { tc } from "../Utils.js";
 
 function NewCountry(props) {
   const [showDialog, setShowDialog] = useState(false);
@@ -10,55 +11,64 @@ function NewCountry(props) {
     setNewCountryName("");
     setShowDialog(false);
   }
-  function handleSubmit(e) {
-    e.preventDefault();
-    props.onAdd(newCountryName);
-    hideDialog();
+  function handleSave() {
+    if (newCountryName.length > 0) {
+      props.onAdd(newCountryName);
+      hideDialog();
+    }
   }
   function handleKeyUp(e) {
-    e.keyCode === 27 && hideDialog();
+    (e.keyCode ? e.keyCode : e.which) === 13 && handleSave();
   }
+  const handleChange = (e) => {
+    setNewCountryName(tc(e.target.value));
+  };
 
   return (
-    <>
-      {showDialog ? (
-        <form onSubmit={(e) => handleSubmit(e)} onKeyUp={(e) => handleKeyUp(e)}>
-          <div id="overlay" onClick={hideDialog}></div>
-          <div id="dialog">
-            <h3>Enter new country name</h3>
-            <input
-              type="text"
-              name="NewCountryName"
-              placeholder="enter name"
-              autoFocus
-              autoComplete="off"
+    <Dialog.Root open={showDialog} onOpenChange={setShowDialog}>
+      <Dialog.Trigger>
+        <Button size="2" color="green" variant="soft">
+          <PlusCircledIcon />
+        </Button>
+      </Dialog.Trigger>
+
+      <Dialog.Content maxWidth="450px">
+        <Dialog.Title>Add Country</Dialog.Title>
+        <Dialog.Description size="2" mb="4">
+          Enter the country name.
+        </Dialog.Description>
+        <Flex direction="column" gap="3">
+          <label>
+            <Text as="div" size="2" mb="1" weight="bold">
+              Name
+            </Text>
+            <TextField.Root
+              name="newCountryName"
+              placeholder="Enter the country name"
+              onChange={handleChange}
               value={newCountryName}
-              onChange={(e) => setNewCountryName(e.target.value)}
+              autoComplete="off"
+              onKeyUp={handleKeyUp}
             />
-            <div id="buttons">
-              <button
-                type="submit"
-                id="save"
-                disabled={newCountryName.trim().length === 0}
-              >
-                save
-              </button>
-              <button id="cancel" type="button" onClick={hideDialog}>
-                cancel
-              </button>
-            </div>
-          </div>
-        </form>
-      ) : (
-        <img
-          src={trigger}
-          alt="New Country"
-          title="New Country"
-          id="trigger"
-          onClick={() => setShowDialog(true)}
-        />
-      )}
-    </>
+          </label>
+        </Flex>
+        <Flex gap="3" mt="4" justify="end">
+          <Dialog.Close>
+            <Button variant="soft" color="gray" onClick={(e) => hideDialog()}>
+              Cancel
+            </Button>
+          </Dialog.Close>
+          <Dialog.Close>
+            <Button
+              onClick={handleSave}
+              disabled={newCountryName.trim().length === 0}
+            >
+              Save
+            </Button>
+          </Dialog.Close>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }
 
