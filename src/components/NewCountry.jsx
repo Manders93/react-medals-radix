@@ -20,14 +20,16 @@ function NewCountry(props) {
   }
 
   function handleSave() {
-    if (newCountryName.length > 0) {
+    if (newCountryName.trim().length > 0) {
       props.onAdd(newCountryName);
       hideDialog();
     }
   }
 
   function handleKeyUp(e) {
-    (e.keyCode ? e.keyCode : e.which) === 13 && handleSave();
+    if (e.key === "Enter") {
+      handleSave();
+    }
   }
 
   const handleChange = (e) => {
@@ -36,13 +38,13 @@ function NewCountry(props) {
 
   return (
     <Dialog.Root open={showDialog} onOpenChange={setShowDialog}>
-      <Dialog.Trigger>
-        <Tooltip content="Add a new country">
+      <Tooltip content="Add a new country">
+        <Dialog.Trigger asChild>
           <Button size="2" color="green" variant="soft">
             <PlusCircledIcon />
           </Button>
-        </Tooltip>
-      </Dialog.Trigger>
+        </Dialog.Trigger>
+      </Tooltip>
 
       <Dialog.Content maxWidth="450px">
         <Dialog.Title>Add Country</Dialog.Title>
@@ -73,7 +75,7 @@ function NewCountry(props) {
             <Button
               variant="soft"
               color="gray"
-              onClick={() => hideDialog()}
+              onClick={hideDialog}
             >
               Cancel
             </Button>
