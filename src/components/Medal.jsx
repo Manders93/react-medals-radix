@@ -6,6 +6,7 @@ import {
   Button,
   Text,
   Em,
+  Tooltip,
 } from "@radix-ui/themes";
 import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
 import MedalSvg from "./MedalSvg";
@@ -37,13 +38,12 @@ function Medal(props) {
         {/* Only users with patch permission can change medals */}
         {props.canPatch ? (
           <Flex align="center" justify="between">
-            <Button
-              variant="ghost"
-              disabled={
-                props.country[props.medal.name].page_value === 0
-              }
-            >
-              <MinusIcon
+            <Tooltip content="Decrease medal count">
+              <Button
+                variant="ghost"
+                disabled={
+                  props.country[props.medal.name].page_value === 0
+                }
                 onClick={() =>
                   props.country[props.medal.name].page_value > 0 &&
                   props.onDecrement(
@@ -51,23 +51,28 @@ function Medal(props) {
                     props.medal.name
                   )
                 }
-              />
-            </Button>
+              >
+                <MinusIcon />
+              </Button>
+            </Tooltip>
 
             <Badge variant="outline">
               {props.country[props.medal.name].page_value}
             </Badge>
 
-            <Button variant="ghost">
-              <PlusIcon
+            <Tooltip content="Increase medal count">
+              <Button
+                variant="ghost"
                 onClick={() =>
                   props.onIncrement(
                     props.country.id,
                     props.medal.name
                   )
                 }
-              />
-            </Button>
+              >
+                <PlusIcon />
+              </Button>
+            </Tooltip>
           </Flex>
         ) : (
           <Flex align="center" justify="center">
